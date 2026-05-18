@@ -154,4 +154,10 @@ add_subdirectory(${QuokkaCode_SOURCE_DIR}/extern/turbulence/plugins/AMReX ${Quok
 #match Microphysics' CMake default of 1.
 add_definitions(-DNAUX_NET -DSTRANG -DNET_LOOP_UNROLL_LEN=1)
 add_subdirectory(${QuokkaCode_SOURCE_DIR}/extern/Microphysics ${QuokkaCode_BINARY_DIR}/Microphysics)
+
+# Extract compressed yield data at build time (avoids polluting git with large text datasets)
+file(ARCHIVE_EXTRACT INPUT
+     ${QuokkaCode_SOURCE_DIR}/extern/yields/yields.tar.gz DESTINATION
+     ${QuokkaCode_SOURCE_DIR}/extern/yields)
+
 add_subdirectory(${QuokkaCode_SOURCE_DIR}/src ${QuokkaCode_BINARY_DIR}/src)
