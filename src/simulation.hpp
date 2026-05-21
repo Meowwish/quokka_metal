@@ -2097,6 +2097,11 @@ template <typename problem_t> void AMRSimulation<problem_t>::particleMeshInterac
 	// We allow particle formation at the finest level only to avoid duplicate particle creation from multiple levels at the same location.
 	particleRegister_.createParticlesFromState(state_new_cc_[lev], accretion_rate_at_level, lev, time, dt, state_fc_ptr, verbose);
 
+	// #Chuhan_start: Once WR/AGB injection has been completed during the particle update phase, only SNII chemical deposition is performed.
+	// Deposit SNII chemical feedback into the chemistry fields.
+	particleRegister_.depositChemicalFeedback(state_new_cc_[lev], lev, time, dt);
+	// #Chuhan_end: Ensure that WR/AGB and SNII are placed in the update/deposition stages respectively.
+
 	// Deposit the SN particles into the MultiFab
 	const auto [num_sn_explosions, max_velocity] = particleRegister_.depositSN(state_new_cc_[lev], state_fc_ptr, lev, time, dt);
 	sn_count_ = num_sn_explosions;
