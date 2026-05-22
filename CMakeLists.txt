@@ -155,10 +155,4 @@ add_subdirectory(${QuokkaCode_SOURCE_DIR}/extern/turbulence/plugins/AMReX ${Quok
 add_definitions(-DNAUX_NET -DSTRANG -DNET_LOOP_UNROLL_LEN=1)
 add_subdirectory(${QuokkaCode_SOURCE_DIR}/extern/Microphysics ${QuokkaCode_BINARY_DIR}/Microphysics)
 
-set(QUOKKA_YIELD_ARCHIVE ${QuokkaCode_SOURCE_DIR}/extern/yields/yields.tar.gz)
-set(QUOKKA_YIELD_SENTINEL ${QuokkaCode_SOURCE_DIR}/extern/yields/SNII_Kobayashi0611)
-if(EXISTS ${QUOKKA_YIELD_ARCHIVE} AND NOT EXISTS ${QUOKKA_YIELD_SENTINEL})
-  file(ARCHIVE_EXTRACT INPUT ${QUOKKA_YIELD_ARCHIVE} DESTINATION ${QuokkaCode_SOURCE_DIR}/extern/yields)
-endif()
-
 add_subdirectory(${QuokkaCode_SOURCE_DIR}/src ${QuokkaCode_BINARY_DIR}/src)
