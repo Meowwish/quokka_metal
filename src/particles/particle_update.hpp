@@ -13,6 +13,7 @@
 #include "particle_chemical_yield.hpp"
 #include "particle_radiation.hpp"
 #include "particle_types.hpp"
+#include "particle_utils.hpp"
 #include "physics_info.hpp"
 
 namespace quokka
@@ -149,12 +150,15 @@ template <> struct ParticlePropertyUpdateTraits<ParticleType::StochasticStellarP
 			return;
 		}
 
+		amrex::MultiFab state_buffer(state.boxArray(), state.DistributionMap(), state.nComp(), state.nGrow());
+		state_buffer.setVal(0.0);
+
 		for (typename ContainerType::ParIterType pti(*container, lev); pti.isValid(); ++pti) {
 			auto &particles = pti.GetArrayOfStructs();
 			auto *pData = particles().data();
 			const amrex::Long np = pti.numParticles();
 
-			const auto &local_state = state.array(pti);
+			const auto &local_state = state_buffer.array(pti);
 			const auto &geom = container->Geom(lev);
 			const auto plo = geom.ProbLoArray();
 			const auto dxi = geom.InvCellSizeArray();
@@ -322,6 +326,10 @@ template <> struct ParticlePropertyUpdateTraits<ParticleType::StochasticStellarP
 				}
 			});
 		}
+
+		state_buffer.SumBoundary(container->Geom(lev).periodicity());
+		ParticleUtils::roundoffMultiFab(state_buffer);
+		state.plus(state_buffer, 0, state.nComp(), 0);
 	}
 };
 

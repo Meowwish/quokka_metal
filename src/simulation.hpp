@@ -1474,9 +1474,9 @@ template <typename problem_t> void AMRSimulation<problem_t>::evolve()
 				kickParticlesAllLevels(dt_[0]);
 			}
 
-			// Stellar evolution and SN deposition; only apply to star particles
-			// Update particle properties (e.g., luminosity) before particle-mesh interaction
+			// Stellar evolution and feedback; apply WR/AGB chemistry before SN deposition.
 			particleRegister_.updateParticleProperties(cur_time, dt_[0]);
+			particleRegister_.updateChemicalFeedback(state_new_cc_[finest_level], finest_level, cur_time, dt_[0]);
 
 			// TODO(cch): Need to take care of AMR subcycling
 			particleMeshInteraction(cur_time, dt_[0]);

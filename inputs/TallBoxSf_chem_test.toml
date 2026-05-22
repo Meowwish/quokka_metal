@@ -16,10 +16,11 @@ cfl = 0.3
 do_reflux = 1
 do_subcycle = 0
 
-stop_time = 1.57788e16  # 500 Myr - enough for star formation and SN
+stop_time = 9.46728e14  # 30 Myr
 max_timesteps = 20000
-plotfile_interval = 3.15576e13
-checkpoint_interval = 3.15576e13
+plotfile_interval = -1
+plottime_interval = 6.31152e12  # write one video frame every 0.2 Myr
+checkpoint_interval = -1
 suppress_output = 0
 
 # Chemical feedback - SNII + WR + AGB
@@ -67,4 +68,5 @@ perturb.filename = "zdrv.hdf5"
 perturb.amplitude = 7e5
 
 statistics_interval = 512
-plotfile_prefix = "/Users/meow/quokka/tests/tallbox_chem/plt"
+plotfile_prefix = "tallbox_chem/plt"
+checkpoint_prefix = "tallbox_chem/chk"

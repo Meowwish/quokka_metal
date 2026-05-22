@@ -1,4 +1,22 @@
 # Minimal input to exercise WR and AGB continuous yield deposition
+geometry.prob_lo = [-3.949667304e+19, -3.949667304e+19, -3.949667304e+19]
+geometry.prob_hi = [3.949667304e+19, 3.949667304e+19, 3.949667304e+19]
+quokka.bc = ["periodic", "periodic", "periodic"]
+
+amr.v = 1
+amr.n_cell = [32, 32, 32]
+amr.max_level = 0
+amr.blocking_factor = 16
+amr.max_grid_size = 16
+amr.n_error_buf = 2
+amr.grid_eff = 0.7
+
+do_reflux = 1
+do_subcycle = 0
+do_tracers = 0
+
+hydro.artificial_viscosity_coefficient = 0.1
+
 particles.verbose = 0
 particles.eps_ff = 0.5
 particles.enable_chemical_feedback = 1
@@ -27,6 +45,7 @@ problem.initial_particles_file = "../inputs/ChuhanProblem_wind_particles.txt"
 max_timesteps = 10
 initial_dt = 1.0e13
 plotfile_interval = 10
-checkpoint_interval = 0
+checkpoint_interval = -1
 
-plotfile_prefix = "/Users/meow/quokka/tests/chuhan_wind/plt"
+plotfile_prefix = "chuhan_wind/plt"
+checkpoint_prefix = "chuhan_wind/chk"
