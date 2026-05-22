@@ -32,21 +32,12 @@ if (AMReX_SPACEDIM EQUAL 3)
       COMMAND TallBoxSf ../inputs/TallBoxSf_chem_test.toml ${QuokkaTestParams}
       WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests)
 
-    add_test(
-      NAME TallBoxSfChemVideo
-      COMMAND python3 ${CMAKE_SOURCE_DIR}/scripts/make_tallbox_video.py
-              --plotdir ${CMAKE_SOURCE_DIR}/tests/tallbox_chem
-              --outdir ${CMAKE_SOURCE_DIR}/tests/tallbox_chem/videos
-      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-
     # Ensure perturbations are computed before simulation runs
     set_tests_properties(ComputeTallBoxSfPerturbations PROPERTIES FIXTURES_SETUP TallBoxSf_fixture)
     set_tests_properties(TallBoxSf PROPERTIES FIXTURES_REQUIRED TallBoxSf_fixture)
     set_tests_properties(PrepareTallBoxSfChemOutput PROPERTIES FIXTURES_SETUP TallBoxSfChemOutput_fixture)
     set_tests_properties(PrepareTallBoxSfChemYields PROPERTIES FIXTURES_SETUP TallBoxSfChemYields_fixture)
     set_tests_properties(TallBoxSfChem PROPERTIES FIXTURES_REQUIRED "TallBoxSf_fixture;TallBoxSfChemOutput_fixture;TallBoxSfChemYields_fixture" FIXTURES_SETUP TallBoxSfChem_fixture)
-    set_tests_properties(TallBoxSfChemVideo PROPERTIES FIXTURES_REQUIRED TallBoxSfChem_fixture)
     set_tests_properties(TallBoxSf PROPERTIES COST 85)
     set_tests_properties(TallBoxSfChem PROPERTIES COST 1200 TIMEOUT 7200)
-    set_tests_properties(TallBoxSfChemVideo PROPERTIES COST 30 TIMEOUT 600)
 endif()
