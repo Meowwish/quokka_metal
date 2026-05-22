@@ -49,4 +49,7 @@ problem.initial_particles_file = "../inputs/test_SNII_Yields_particles.txt"
 max_timesteps = 100
 initial_dt = 2.0e13
 plotfile_interval = 10
-checkpoint_interval = 10
+checkpoint_interval = -1
+
+plotfile_prefix = "test_SNII_Yields/plt"
+checkpoint_prefix = "test_SNII_Yields/chk"
