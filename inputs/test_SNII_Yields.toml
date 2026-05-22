@@ -44,7 +44,7 @@ particles.chemical_tracked_channels = "SNII,WR,AGB"
 
 problem.n0 = 1.0e5
 problem.Tamb = 1.0e1
-problem.initial_particles_file = "../inputs/ChuhanProblem_particles.txt"
+problem.initial_particles_file = "../inputs/test_SNII_Yields_particles.txt"
 
 max_timesteps = 100
 initial_dt = 2.0e13

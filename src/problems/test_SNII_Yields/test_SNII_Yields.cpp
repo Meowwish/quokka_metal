@@ -1,5 +1,5 @@
-/// \file testChuhanProblem.cpp
-/// \brief Defines a compact StochasticStellarPop test problem for Chuhan chemistry-feedback validation.
+/// \file test_SNII_Yields.cpp
+/// \brief Defines a compact StochasticStellarPop test problem for SNII yield validation.
 ///
 
 #include "AMReX_ParmParse.H"
@@ -10,29 +10,29 @@
 #include "hydro/hydro_system.hpp"
 #include "particles/particle_types.hpp"
 
-struct ChuhanProblem {
+struct test_SNII_Yields {
 };
 
 constexpr Real gamma_ = 5. / 3.;
 constexpr Real year = 3.15576e+07;
 static Real n0 = 1.0e4;								     // NOLINT
 static Real Tamb = 10.0;							     // NOLINT
-static std::string initial_particles_file = "../inputs/ChuhanProblem_particles.txt"; // NOLINT
+static std::string initial_particles_file = "../inputs/test_SNII_Yields_particles.txt"; // NOLINT
 
-template <> struct quokka::EOS_Traits<ChuhanProblem> {
+template <> struct quokka::EOS_Traits<test_SNII_Yields> {
 	static constexpr double gamma = gamma_;
 	static constexpr double mean_molecular_weight = 1.0;
 };
 
-template <> struct Particle_Traits<ChuhanProblem> {
+template <> struct Particle_Traits<test_SNII_Yields> {
 	static constexpr ParticleSwitch particle_switch = ParticleSwitch::StochasticStellarPop;
 };
 
-template <> struct HydroSystem_Traits<ChuhanProblem> {
+template <> struct HydroSystem_Traits<test_SNII_Yields> {
 	static constexpr bool reconstruct_eint = true;
 };
 
-template <> struct Physics_Traits<ChuhanProblem> {
+template <> struct Physics_Traits<test_SNII_Yields> {
 	static constexpr bool is_self_gravity_enabled = false;
 	static constexpr bool is_hydro_enabled = true;
 	static constexpr bool is_radiation_enabled = false;
@@ -49,9 +49,9 @@ template <> struct Physics_Traits<ChuhanProblem> {
 	static constexpr double radiation_constant = C::a_rad;
 };
 
-template <> void QuokkaSimulation<ChuhanProblem>::createInitialStochasticStellarPopParticles()
+template <> void QuokkaSimulation<test_SNII_Yields>::createInitialStochasticStellarPopParticles()
 {
-	const int nreal_extra = quokka::StochasticStellarPopParticleRealComps<ChuhanProblem>;
+	const int nreal_extra = quokka::StochasticStellarPopParticleRealComps<test_SNII_Yields>;
 	StochasticStellarPopParticles->SetVerbose(1);
 	StochasticStellarPopParticles->InitFromAsciiFile(initial_particles_file, nreal_extra, nullptr);
 
@@ -75,7 +75,7 @@ template <> void QuokkaSimulation<ChuhanProblem>::createInitialStochasticStellar
 	amrex::Gpu::streamSynchronize();
 }
 
-template <> void QuokkaSimulation<ChuhanProblem>::setInitialConditionsOnGrid(quokka::grid const &grid_elem)
+template <> void QuokkaSimulation<test_SNII_Yields>::setInitialConditionsOnGrid(quokka::grid const &grid_elem)
 {
 	const amrex::Box &indexRange = grid_elem.indexRange_;
 	const amrex::Array4<double> &state_cc = grid_elem.array_;
@@ -84,21 +84,21 @@ template <> void QuokkaSimulation<ChuhanProblem>::setInitialConditionsOnGrid(quo
 	const double e_int = 1.0 / (gamma_ - 1.0) * rho * C::k_B * Tamb;
 
 	amrex::ParallelFor(indexRange, [=] AMREX_GPU_DEVICE(int i, int j, int k) {
-		state_cc(i, j, k, HydroSystem<ChuhanProblem>::density_index) = rho;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem>::x1Momentum_index) = 0.0;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem>::x2Momentum_index) = 0.0;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem>::x3Momentum_index) = 0.0;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem>::energy_index) = e_int;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem>::internalEnergy_index) = e_int;
-		for (int n = 0; n < Physics_Traits<ChuhanProblem>::numPassiveScalars; ++n) {
-			state_cc(i, j, k, HydroSystem<ChuhanProblem>::scalar0_index + n) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_SNII_Yields>::density_index) = rho;
+		state_cc(i, j, k, HydroSystem<test_SNII_Yields>::x1Momentum_index) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_SNII_Yields>::x2Momentum_index) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_SNII_Yields>::x3Momentum_index) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_SNII_Yields>::energy_index) = e_int;
+		state_cc(i, j, k, HydroSystem<test_SNII_Yields>::internalEnergy_index) = e_int;
+		for (int n = 0; n < Physics_Traits<test_SNII_Yields>::numPassiveScalars; ++n) {
+			state_cc(i, j, k, HydroSystem<test_SNII_Yields>::scalar0_index + n) = 0.0;
 		}
 	});
 }
 
 auto problem_main() -> int
 {
-	QuokkaSimulation<ChuhanProblem> sim;
+	QuokkaSimulation<test_SNII_Yields> sim;
 
 	sim.reconstructionOrder_ = 3;
 	sim.cflNumber_ = 0.5;
@@ -115,6 +115,6 @@ auto problem_main() -> int
 	sim.setInitialConditions();
 
 	sim.evolve();
-	amrex::Print() << "ChuhanProblem completed\n";
+	amrex::Print() << "test_SNII_Yields completed\n";
 	return 0;
 }

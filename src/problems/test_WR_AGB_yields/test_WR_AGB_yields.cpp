@@ -11,28 +11,28 @@
 #include "hydro/hydro_system.hpp"
 #include "particles/particle_types.hpp"
 
-struct ChuhanProblem_wind {
+struct test_WR_AGB_yields {
 };
 
 constexpr Real gamma_ = 5. / 3.;
 static Real n0 = 1.0e4;									  // NOLINT
 static Real Tamb = 10.0;								  // NOLINT
-static std::string initial_particles_file = "../inputs/ChuhanProblem_wind_particles.txt"; // NOLINT
+static std::string initial_particles_file = "../inputs/test_WR_AGB_yields_particles.txt"; // NOLINT
 
-template <> struct quokka::EOS_Traits<ChuhanProblem_wind> {
+template <> struct quokka::EOS_Traits<test_WR_AGB_yields> {
 	static constexpr double gamma = gamma_;
 	static constexpr double mean_molecular_weight = 1.0;
 };
 
-template <> struct Particle_Traits<ChuhanProblem_wind> {
+template <> struct Particle_Traits<test_WR_AGB_yields> {
 	static constexpr ParticleSwitch particle_switch = ParticleSwitch::StochasticStellarPop;
 };
 
-template <> struct HydroSystem_Traits<ChuhanProblem_wind> {
+template <> struct HydroSystem_Traits<test_WR_AGB_yields> {
 	static constexpr bool reconstruct_eint = true;
 };
 
-template <> struct Physics_Traits<ChuhanProblem_wind> {
+template <> struct Physics_Traits<test_WR_AGB_yields> {
 	static constexpr bool is_self_gravity_enabled = false;
 	static constexpr bool is_hydro_enabled = true;
 	static constexpr bool is_radiation_enabled = false;
@@ -49,9 +49,9 @@ template <> struct Physics_Traits<ChuhanProblem_wind> {
 	static constexpr double radiation_constant = C::a_rad;
 };
 
-template <> void QuokkaSimulation<ChuhanProblem_wind>::createInitialStochasticStellarPopParticles()
+template <> void QuokkaSimulation<test_WR_AGB_yields>::createInitialStochasticStellarPopParticles()
 {
-	const int nreal_extra = quokka::StochasticStellarPopParticleRealComps<ChuhanProblem_wind>;
+	const int nreal_extra = quokka::StochasticStellarPopParticleRealComps<test_WR_AGB_yields>;
 	StochasticStellarPopParticles->SetVerbose(1);
 	StochasticStellarPopParticles->InitFromAsciiFile(initial_particles_file, nreal_extra, nullptr);
 
@@ -81,7 +81,7 @@ template <> void QuokkaSimulation<ChuhanProblem_wind>::createInitialStochasticSt
 	amrex::Gpu::streamSynchronize();
 }
 
-template <> void QuokkaSimulation<ChuhanProblem_wind>::setInitialConditionsOnGrid(quokka::grid const &grid_elem)
+template <> void QuokkaSimulation<test_WR_AGB_yields>::setInitialConditionsOnGrid(quokka::grid const &grid_elem)
 {
 	const amrex::Box &indexRange = grid_elem.indexRange_;
 	const amrex::Array4<double> &state_cc = grid_elem.array_;
@@ -90,21 +90,21 @@ template <> void QuokkaSimulation<ChuhanProblem_wind>::setInitialConditionsOnGri
 	const double e_int = 1.0 / (gamma_ - 1.0) * rho * C::k_B * Tamb;
 
 	amrex::ParallelFor(indexRange, [=] AMREX_GPU_DEVICE(int i, int j, int k) {
-		state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::density_index) = rho;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::x1Momentum_index) = 0.0;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::x2Momentum_index) = 0.0;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::x3Momentum_index) = 0.0;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::energy_index) = e_int;
-		state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::internalEnergy_index) = e_int;
-		for (int n = 0; n < Physics_Traits<ChuhanProblem_wind>::numPassiveScalars; ++n) {
-			state_cc(i, j, k, HydroSystem<ChuhanProblem_wind>::scalar0_index + n) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::density_index) = rho;
+		state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::x1Momentum_index) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::x2Momentum_index) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::x3Momentum_index) = 0.0;
+		state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::energy_index) = e_int;
+		state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::internalEnergy_index) = e_int;
+		for (int n = 0; n < Physics_Traits<test_WR_AGB_yields>::numPassiveScalars; ++n) {
+			state_cc(i, j, k, HydroSystem<test_WR_AGB_yields>::scalar0_index + n) = 0.0;
 		}
 	});
 }
 
 auto problem_main() -> int
 {
-	QuokkaSimulation<ChuhanProblem_wind> sim;
+	QuokkaSimulation<test_WR_AGB_yields> sim;
 
 	sim.reconstructionOrder_ = 3;
 	sim.cflNumber_ = 0.5;
@@ -121,6 +121,6 @@ auto problem_main() -> int
 	sim.setInitialConditions();
 
 	sim.evolve();
-	amrex::Print() << "ChuhanProblem_wind completed\n";
+	amrex::Print() << "test_WR_AGB_yields completed\n";
 	return 0;
 }
